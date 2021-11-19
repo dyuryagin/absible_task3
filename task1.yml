@@ -1,0 +1,10 @@
+---
+- name: Install httpd
+  hosts: nodes
+  remote_user: ansible
+  become: yes
+
+  tasks:
+  - name: Install httpd task
+    import_role: 
+      name: http-role

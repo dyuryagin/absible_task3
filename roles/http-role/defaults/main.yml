@@ -1,0 +1,5 @@
+---
+# defaults file for http-role
+index_html_path: /var/www/html/index.html
+
+

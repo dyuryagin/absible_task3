@@ -1,0 +1,21 @@
+---
+# tasks file for http-role
+- name: Install httpd
+  package:
+    name: httpd
+    state: present
+- name: Start service
+  service:
+    name: httpd
+    state: started
+- name: Create index.html
+  copy:
+    content: "Welcome to my web server {{ansible_facts['nodename']}}"
+    dest: "{{ index_html_path }}"
+  notify: Restart httpd after changes
+- name: Configure firewalld open port 80
+  firewalld:
+    service: http
+    permanent: yes
+    immediate: yes
+    state: enabled
