@@ -1,2 +1,42 @@
 ---
 # tasks file for ftp-role
+- name: Install vsftpd package
+  package:
+    name: vsftpd
+    state: present
+- name: Install policycoreutils-python-utils package
+  package:
+    name: policycoreutils-python-utils
+    state: present
+- name: Copy vsftpd config file
+  copy:
+    src: vsftpd.conf
+    dest: /etc/vsftpd/vsftpd.conf
+- name: Create upload dir
+  file:
+    path: /var/ftp/pub/upload
+    state: directory
+    mode: '0757'
+- name: Configure SElinux boolean
+  seboolean:
+    name: ftpd_anon_write
+    state: yes
+    persistent: yes
+- name: Configure SElinux context
+  sefcontext:
+    target: '/var/ftp/pub/upload'
+    setype: public_content_rw_t
+    state: present
+- name: Apply SElinux context
+  command: restorecon -irv /var/ftp/pub/upload
+- name: Configure wirewalld
+  firewalld:
+    service: ftp
+    permanent: yes
+    immediate: yes
+    state: enabled
+- name: Run service vsftpd
+  service:
+    name: vsftpd
+    state: started
+    enabled: yes
